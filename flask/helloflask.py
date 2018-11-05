@@ -3,6 +3,9 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
+import imp
+from imp import reload 
+
 
 app = Flask(__name__)
 
@@ -27,6 +30,19 @@ def put_tasks():
     pdx=pd.DataFrame(x)
     out = pdx.to_json()
     return out
+
+@app.route('/module', methods=['GET'])
+def put_module():
+    m=request.data
+    with open('unit/module.py', 'w+') as myfile:
+      myfile.write(m)
+    munit=imp.load_source('mymodule','unit/module.py');
+    #reload('module')
+   
+    munit.compute('ABC')
+    return 'OK'
+
+
 
 @app.route('/mrec', methods=['GET'])
 def get_file():
