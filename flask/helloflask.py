@@ -6,13 +6,14 @@ import pandas as pd
 import imp
 import mybase as m
 from imp import reload 
+from types import ModuleType
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO
 else:
     from io import StringIO
 
-
+munit =[]
 app = Flask(__name__)
 
 api = Api(app)
@@ -34,8 +35,11 @@ def put_tasks():
     print(m)
     mBuffer = StringIO(m)
     dframe = pd.read_csv(mBuffer)
-    dframe.head()
+    print(dframe.head())
     print(dframe.shape)
+    global munit
+    print( isinstance(munit,ModuleType))
+    munit.compute(dframe)
     return str(dframe.shape)
 
 @app.route('/module', methods=['GET'])
@@ -43,11 +47,14 @@ def put_module():
     m=request.data
     with open('unit/module.py', 'w+') as myfile:
       myfile.write(m)
+    global munit
     munit=imp.load_source('mymodule','unit/module.py');
+    xs=str(isinstance(munit,ModuleType))
+    print(xs)
     #reload('module')
    
-    munit.compute('ABC')
-    return 'OK'
+  #  munit.compute('ABC')
+    return 'OK '+xs
 
 
 
