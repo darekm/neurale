@@ -4,7 +4,13 @@ from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
 import imp
+import mybase as m
 from imp import reload 
+import sys
+if sys.version_info[0] < 3: 
+    from StringIO import StringIO
+else:
+    from io import StringIO
 
 
 app = Flask(__name__)
@@ -26,10 +32,11 @@ def get_tasks():
 def put_tasks():
     m=request.data
     print(m)
-    x = np.array([1,-1,1,-1])
-    pdx=pd.DataFrame(x)
-    out = pdx.to_json()
-    return out
+    mBuffer = StringIO(m)
+    dframe = pd.read_csv(mBuffer)
+    dframe.head()
+    print(dframe.shape)
+    return str(dframe.shape)
 
 @app.route('/module', methods=['GET'])
 def put_module():
