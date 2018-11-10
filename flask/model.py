@@ -5,14 +5,15 @@ import keras
 from keras.models import Sequential, Model, model_from_json
 from keras.layers import Conv2D,Dense,Flatten,MaxPool2D
 from keras.layers.core import Dense, Dropout, Activation
-from keras.preprocessing.image import aImageDataGenerator
+from keras.preprocessing.image import ImageDataGenerator
 #import scipy.fftpack
 from sklearn.preprocessing import StandardScaler
 
-def dataset_prediction(df):
-    g_model = global model
+
+
+def dataset_prediction(df,_model):
     val = prepare_data(df)
-    return g_model.predict_generator(val)
+    return _model.predict_generator(val)
 
 def prepare_data(df):
     #prepare

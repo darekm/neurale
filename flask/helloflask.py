@@ -3,8 +3,9 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
-import imp
-import mybase as m
+import model
+
+
 from imp import reload 
 from types import ModuleType
 import sys
@@ -14,6 +15,7 @@ else:
     from io import StringIO
 
 munit =[]
+mmodel=[]
 app = Flask(__name__)
 
 api = Api(app)
@@ -56,6 +58,14 @@ def put_module():
   #  munit.compute('ABC')
     return 'OK '+xs
 
+@app.route('/initmodel', methods=['GET'])
+def initmodel():
+    m=request.args.get('model')
+    print('model '+m)
+    global mmodel
+    mmodel=model.init_model(m)
+    print('type '+type(mmodel).__name__+'  '+str(type(mmodel)))
+    return 'OK '+m
 
 
 @app.route('/mrec', methods=['GET'])
