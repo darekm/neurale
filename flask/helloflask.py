@@ -6,7 +6,7 @@ import pandas as pd
 import model
 
 
-from imp import reload 
+import imp
 from types import ModuleType
 import sys
 if sys.version_info[0] < 3: 
@@ -67,6 +67,25 @@ def initmodel():
     print('type '+type(mmodel).__name__+'  '+str(type(mmodel)))
     return 'OK '+m
 
+
+@app.route('/predictmodel', methods=['GET'])
+def predictmodel():
+    m=request.args.get('model')
+    print('model '+m)
+    d=request.data
+    print(d)
+    mBuffer = StringIO(d)
+    dframe = pd.read_csv(mBuffer)
+    print(dframe.head())
+    print('shape '+str(dframe.shape))
+
+    global mmodel
+    print('type '+type(mmodel).__name__+'  '+str(type(mmodel)))
+    if type(mmodel).__name__ =='list':
+      return 'ERROR model not init',500
+    
+    return model.predict_model(dframe,mmodel)
+ 
 
 @app.route('/mrec', methods=['GET'])
 def get_file():
