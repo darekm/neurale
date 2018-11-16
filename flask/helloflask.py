@@ -63,6 +63,8 @@ def initmodel():
     m=request.args.get('model')
     print('model '+m)
     global mmodel
+    if type(mmodel).__name__ !='list':
+      return 'OK the model has already been initialized',200
     mmodel=model.init_model(m)
     print('type '+type(mmodel).__name__+'  '+str(type(mmodel)))
     return 'OK '+m

@@ -28,6 +28,7 @@ def prepare_data(df):
     for k in data_elems[:]:
         norm_data.append(StandardScaler().fit_transform(k.reshape(-1,1)).reshape(-1))
     data_elems = np.array(norm_data,dtype="float32")
+    print "data_elems",data_elems.shape
 #    data_elems=data_elems[:2*15*20]
     label_elems = df["training"][:1].values
     #convert to generator
@@ -39,13 +40,13 @@ def prepare_data(df):
     
 
 def init_model(model_name):
-    print "\nhello"
     json_file = open(model_name+'.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
     model.load_weights(model_name+'.h5')
     # compile model
+    #https://stackoverflow.com/questions/41990014/load-multiple-models-in-tensorflow
     model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
