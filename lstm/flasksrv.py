@@ -76,8 +76,12 @@ def put_module():
 
 @app.route('/start', methods=['GET'])
 def start_module():
+    m=request.args.get('dataset')
    
     global COMP
+    if not COMP.hasdata:
+        COMP.load_dataset(m)
+        
     if not COMP.hasdata:
         return 'ERROR the model has no data',500
     global UNIT
@@ -93,7 +97,8 @@ def start_module():
 @app.route('/run', methods=['GET'])
 def runmodel():
     m=request.args.get('model')
-    print('model '+m)
+    if m:
+        print('model '+m)
 
     global COMP
  

@@ -11,5 +11,5 @@ def CreateModel(s,window_size):
     model.add(LSTM(4, input_shape=(2,window_size)))
     model.add(Dense(1))
 
-    print(s)
+    print("create model :",s,window_size)
     return model

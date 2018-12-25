@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
-import model
+import model_5min as model
 
 
 import imp
@@ -34,19 +34,24 @@ def get_tasks():
 @app.route('/store', methods=['GET'])
 def put_tasks():
     m=request.data
-    print(m)
+#    print(m)
     mBuffer = StringIO(m)
     dframe = pd.read_csv(mBuffer)
-    print(dframe.head())
+    #print(dframe.head())
     print(dframe.shape)
     global munit
     print( isinstance(munit,ModuleType))
-    munit.compute(dframe)
-    return str(dframe.shape)
+    dresult=munit.compute(dframe)
+    dresult.to_csv('mrecout.csv', index=False, header=True)
+    #return 'mrecout.csv' 
+    print( dresult.groupby('labels').count())
+    return str(dresult.groupby('labels').count())
 
 @app.route('/module', methods=['GET'])
 def put_module():
+    mName=request.args.get('name')
     m=request.data
+    print(mName)
     with open('unit/module.py', 'w+') as myfile:
       myfile.write(m)
     global munit
@@ -61,6 +66,7 @@ def put_module():
 @app.route('/initmodel', methods=['GET'])
 def initmodel():
     m=request.args.get('model')
+    m = "coffe_5min"
     print('model '+m)
     global mmodel
     if type(mmodel).__name__ !='list':

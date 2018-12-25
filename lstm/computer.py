@@ -2,6 +2,7 @@ import numpy
 import matplotlib.pyplot as plt
 import pandas
 import math
+import datetime
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
@@ -32,35 +33,44 @@ class Computer():
         return numpy.array(dataX), numpy.array(dataY)
 
     # convert an array of values into a dataset matrix
-    def inverse_dataset(dset):
+    def inverse_dataset(self,dset):
         x=numpy.append(dset,dset,1)
         yy= self.scaler.inverse_transform(x)
         return yy[:,0]
 
     def compute (self,_model):
+        print("shapeX:",self.trainX.shape)
         _model.compile(loss='mean_squared_error', optimizer='adam')
-        _model.fit(self.trainX, self.trainY, epochs=20, batch_size=1, verbose=1)
+        _model.fit(self.trainX, self.trainY, epochs=10, batch_size=1, verbose=1)
         self.mmodel=_model
-  
+        trainPredict = self.mmodel.predict(self.trainX)
+        print(trainPredict.shape)
+        
     def run(self):
         # make predictions
+        if not self.mmodel:
+            return "model not initialized"
+        print("shapeX:",self.trainX.shape)
         trainPredict = self.mmodel.predict(self.trainX)
         testPredict = self.mmodel.predict(self.testX)
         # invert predictions
+        trainYY=self.trainY.reshape(self.trainY.shape+(1,))
+        testYY=self.testY.reshape(self.testY.shape+(1,))
+
         trainSPredict = self.inverse_dataset(trainPredict)
-        trainSY = self.inverse_dataset(self.trainY)
+        trainSY = self.inverse_dataset(trainYY)
         testPredict = self.inverse_dataset(testPredict)
-        testY = self.inverse_dataset(self.testY)
+        testY = self.inverse_dataset(testYY)
         # calculate root mean squared error
-        trainScore = math.sqrt(mean_squared_error(self.trainY, self.trainPredict))
+        trainScore = math.sqrt(mean_squared_error(self.trainY, trainPredict))
         print('Train Score: %.3f RMSE' % (trainScore))
-        trainSScore = math.sqrt(mean_squared_error(self.trainSY, self.trainSPredict))
+        trainSScore = math.sqrt(mean_squared_error(trainSY, trainSPredict))
         print('Train SScore: %.3f RMSE' % (trainSScore))
-        testScore = math.sqrt(mean_squared_error(testY[0], testPredict[:,0]))
+        testScore = math.sqrt(mean_squared_error(testY, testPredict))
         print('Test Score: %.3f RMSE' % (testScore))
-        f.open('score','a')
-        f.write("%s test score %s  train %s\n" %
-                 (scr, datetime.datetime.now(),testScore, trainScore))
+        with open('score','a') as f:
+            f.write("%s test score %s  train %s\n" %
+                 ( datetime.datetime.now(),testScore, trainScore))
         return testScore
 
     
