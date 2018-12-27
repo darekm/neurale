@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
-import model_5min as model
+import coffe_5min as model
 
 
 import imp
