@@ -1,3 +1,7 @@
 *.mat
 .ipynb_checkpoints/
-
+*.log
+*.json
+*.pyc
+*.h5
+*.csv
