@@ -55,15 +55,21 @@ def put_tasks():
 
 @app.route('/module', methods=['GET'])
 def put_module():
-    mName=request.args.get('name')
-    m=request.data
+    mDataset=request.args.get('dataset')
+    mName=request.args.get('model')
+    m2=request.data
+    m=m2.decode("utf-8")
     print(mName)
-    with open('unit/module.py', 'w+') as myfile:
+    global COMP
+    if not COMP.hasdata:
+        COMP.load_dataset(mDataset)
+    
+    with open('unit/'+mName+'.py', 'w+') as myfile:
         myfile.write(m)
     global UNIT
-    UNIT=imp.load_source('mymodule','unit/module.py');
+    UNIT=imp.load_source('mymodule','unit/'+mName+'.py');
     xs=str(isinstance(UNIT,ModuleType))
-    print(xs)
+    print('unit ',xs)
     #reload('module')
    
    
