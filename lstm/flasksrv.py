@@ -3,6 +3,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
+import types
 from computer import Computer
 
 import imp
@@ -13,12 +14,29 @@ if sys.version_info[0] < 3:
 else:
     from io import StringIO
 
-UNIT =[]
+class A:    
+    def meth1(self, par1):
+        print("in A.meth1: par1 =", par1)
+
+    
+UNIT =A()
+UNIT.was=False
+UNIT.model=[]
 mmodel=[]
 app = Flask(__name__)
 
 api = Api(app)
 COMP=Computer()
+
+
+
+def compile_unit(source):
+        # compile code
+        foo_code = compile(source, "<string>", "exec")
+        foo_ns = {}
+        exec(foo_code,foo_ns)
+        return  types.MethodType(foo_ns["CreateModel"], A)
+
 
 @app.route('/')
 def index():
@@ -63,18 +81,28 @@ def put_module():
     global COMP
     if not COMP.hasdata:
         COMP.load_dataset(mDataset)
+        print('load dataset')
     
-    with open('unit/'+mName+'.py', 'w+') as myfile:
-        myfile.write(m)
+    #with open('unit/'+mName+'.py', 'w+') as myfile:
+    #    myfile.write(m)
     global UNIT
-    UNIT=imp.load_source('mymodule','unit/'+mName+'.py');
-    xs=str(isinstance(UNIT,ModuleType))
-    print('unit ',xs)
+    
+    if not UNIT.was:
+        print("CREATE")
+    COMP.clear()   
+    UNIT.CreateModel=compile_unit(m)
+    UNIT.was=True
+    #UNIT.model
+    cm=UNIT.CreateModel('flask')
+    #UNIT=imp.load_source('mymodule','unit/'+mName+'.py');
+    #xs=str(isinstance(UNIT,ModuleType))
+    #print('unit ',xs)
     #reload('module')
-   
-   
-    global COMP
-    COMP.compute(UNIT.CreateModel('flask'))
+    #UNIT.model.compile(loss='mean_squared_error', optimizer='adam')
+    #cm=UNIT.model
+    #cm=UNIT.CreateModel('flask')
+    COMP.compute(cm)
+    #cm=UNIT.model
     
   #  munit.compute('ABC')
     return 'OK '

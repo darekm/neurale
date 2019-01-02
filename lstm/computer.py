@@ -6,6 +6,7 @@ import datetime
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
+from keras import backend as Kback
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
@@ -37,9 +38,14 @@ class Computer():
         x=numpy.append(dset,dset,1)
         yy= self.scaler.inverse_transform(x)
         return yy[:,0]
-
+    
+    def clear(self):
+        Kback.clear_session()
+  
+ 
     def compute (self,_model):
         print("shapeX:",self.trainX.shape)
+        print("shapeY:",self.trainY.shape)
         _model.compile(loss='mean_squared_error', optimizer='adam')
         _model.fit(self.trainX, self.trainY, epochs=10, batch_size=1, verbose=1)
         self.mmodel=_model
