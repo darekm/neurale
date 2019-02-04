@@ -78,6 +78,9 @@ def put_module():
     m2=request.data
     m=m2.decode("utf-8")
     print(mName)
+    with open('unit/module.txt', 'w+') as myfile:
+        myfile.write(m)
+  
     global COMP
     if not COMP.hasdata:
         COMP.load_dataset(mDataset)
@@ -138,8 +141,8 @@ def runmodel():
  
     if not COMP.hasdata:
         return 'ERROR the model has no data',500
-    x= COMP.run()
-    return 'OK '+"tst= {}".format(x)
+    x,y= COMP.run()
+    return 'OK  &'+"tst= {}".format(x)+"&train= {}".format(y)
   
 
 @app.route('/preparedata', methods=['GET'])

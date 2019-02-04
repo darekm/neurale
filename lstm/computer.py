@@ -47,7 +47,7 @@ class Computer():
         print("shapeX:",self.trainX.shape)
         print("shapeY:",self.trainY.shape)
         _model.compile(loss='mean_squared_error', optimizer='adam')
-        _model.fit(self.trainX, self.trainY, epochs=10, batch_size=1, verbose=1)
+        _model.fit(self.trainX, self.trainY, epochs=20, batch_size=1, verbose=1)
         self.mmodel=_model
         trainPredict = self.mmodel.predict(self.trainX)
         print(trainPredict.shape)
@@ -65,25 +65,25 @@ class Computer():
 
         trainSPredict = self.inverse_dataset(trainPredict)
         trainSY = self.inverse_dataset(trainYY)
-        testPredict = self.inverse_dataset(testPredict)
-        testY = self.inverse_dataset(testYY)
+        #testPredict = self.inverse_dataset(testPredict)
+        #testY = self.inverse_dataset(testYY)
         # calculate root mean squared error
         trainScore = math.sqrt(mean_squared_error(self.trainY, trainPredict))
         print('Train Score: %.3f RMSE' % (trainScore))
         trainSScore = math.sqrt(mean_squared_error(trainSY, trainSPredict))
         print('Train SScore: %.3f RMSE' % (trainSScore))
-        testScore = math.sqrt(mean_squared_error(testY, testPredict))
+        testScore = math.sqrt(mean_squared_error(self.testY, testPredict))
         print('Test Score: %.3f RMSE' % (testScore))
         with open('score','a') as f:
             f.write("%s test score %s  train %s\n" %
                  ( datetime.datetime.now(),testScore, trainScore))
-        return testScore
+        return testScore, trainScore
 
     
 
     def load_dataset(self,model_name):
         # normalize the dataset
-        P1dataset = pandas.read_csv('piec.csv', usecols=[2,3], engine='python', skipfooter=3)
+        P1dataset = pandas.read_csv('piecstyczen.csv', usecols=[2,3], engine='python', skipfooter=3)
    
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         dataset = self.scaler.fit_transform(P1dataset)
