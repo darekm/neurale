@@ -4,7 +4,7 @@ from flask_restful import Api, Resource
 import numpy as np
 import pandas as pd
 import types
-from computer import Computer
+from computeconv import Computer
 
 import imp
 from types import ModuleType
@@ -96,7 +96,8 @@ def put_module():
     UNIT.CreateModel=compile_unit(m)
     UNIT.was=True
     #UNIT.model
-    cm=UNIT.CreateModel('flask')
+    print('windowsize',COMP.window_size)
+    cm=UNIT.CreateModel('flask',COMP.window_size)
     #UNIT=imp.load_source('mymodule','unit/'+mName+'.py');
     #xs=str(isinstance(UNIT,ModuleType))
     #print('unit ',xs)
@@ -174,4 +175,4 @@ class TaskListAPI(Resource):
 
 if __name__ == '__main__':
     api.add_resource(TaskListAPI, '/tasks', endpoint = 'tasks')
-    app.run(host='0.0.0.0',debug=True,port=6004)
+    app.run(host='0.0.0.0',debug=True,port=6005)
