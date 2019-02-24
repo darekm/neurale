@@ -47,9 +47,13 @@ class Computer():
         #print('loss:', score[0])
         self.mmodel=_model
         #trainPredict = self.mmodel.predict(self.trainX)
-        #print(trainPredict.shape)
         
     def check(self,_data):
+        if not self.mmodel:
+            return "model not initialized"
+        mdf=numpy.fromstring(_data, sep=',')
+        mx1=mdf.reshape(1,48,-1)
+
         mp1=model.predict(mx1)
         print('predict',mp1)
         tmp1=numpy.argmax(mp1,1)
@@ -63,12 +67,7 @@ class Computer():
             return "model not initialized"
         print("shapeX:",self.testX.shape)
         print("shapeYO:",self.testYO.shape)
-        #trainPredict1 = self.mmodel.predict(self.trainX)
-        #testPredict1 = self.mmodel.predict(self.testX)        
-        
-        #trainPredict=numpy.argmax(trainPredict1,1)
-        #testPredict=numpy.argmax(testPredict1,1)
-
+  
         #testPredict = self.inverse_dataset(testPredict)
         #testY = self.inverse_dataset(testYY)
         score = self.mmodel.evaluate(self.testX,self.testYO, verbose=2) 
@@ -85,18 +84,17 @@ class Computer():
     def load_dataset(self,model_name):
         # normalize the dataset
         csv_url='mrec20190218.csv'
-
+        print('load dataset ',model_name,'  ',csv_url)
+ 
         MM= pandas.read_csv(csv_url,  engine='python', skipfooter=1)
         Mdataset=MM.sample(frac=1)
         Xdataset=Mdataset.iloc[:,2:]
         Ydataset = Mdataset['training']
 
         self.scaler = MinMaxScaler(feature_range=(0, 1))
-        dataset2 = scaler.fit_transform(Xdataset)
-        dataset=dataset2.reshape(len(dataset),48,32)
+        dataset2 = self.scaler.fit_transform(Xdataset)
+        dataset=dataset2.reshape(len(dataset2),48,32)
    
-        #self.scaler = MinMaxScaler(feature_range=(0, 1))
-        #dataset = self.scaler.fit_transform(P1dataset)
    
         # split into train and test sets
         train_size = int(len(dataset) * 0.77)
@@ -104,22 +102,22 @@ class Computer():
         
         self.trainX = dataset[0:train_size,:]
         self.testX= dataset[train_size:len(dataset),:]
-        print('train:',len(train), len(test))
-        print('trainX:',len(trainX), len(testX))
+        print('trainX:',len(self.trainX), len(self.testX))
 
         # reshape into X=t and Y=t+1
-        window_size=self.window_size
+        self.window_size=7
         
         
         le = preprocessing.LabelEncoder()
         YN=utils.column_or_1d(Ydataset, warn=True)
         YO=le.fit_transform(YN)
         self.Yclasses=len(le.classes_)
+        self.window_size=self.Yclasses
         self.trainY = YO[0:train_size]
         self.testY=YO[train_size:len(YO)]
-        print('trainY:',len(trainY), len(testY))
+        print('trainY:',len(self.trainY), len(self.testY))
         self.trainYO = to_categorical(self.trainY, num_classes=self.Yclasses)
-        self.testYO = to_categorical(selftestY, num_classes=self.Yclasses)
+        self.testYO = to_categorical(self.testY, num_classes=self.Yclasses)
 
 
         self.hasdata=True

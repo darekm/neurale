@@ -40,7 +40,7 @@ def compile_unit(source):
 
 @app.route('/')
 def index():
-    return "Hello, World   from LSTM!"
+    return "Hello, World   from Flask!"
 
 @app.route('/test')
 def test():
@@ -56,7 +56,7 @@ def get_tasks():
     return out
 
 @app.route('/store', methods=['GET'])
-def put_tasks():
+def store_data():
     m=request.data
 #    print(m)
     mBuffer = StringIO(m)
@@ -84,10 +84,7 @@ def put_module():
     global COMP
     if not COMP.hasdata:
         COMP.load_dataset(mDataset)
-        print('load dataset')
     
-    #with open('unit/'+mName+'.py', 'w+') as myfile:
-    #    myfile.write(m)
     global UNIT
     
     if not UNIT.was:
@@ -98,17 +95,8 @@ def put_module():
     #UNIT.model
     print('windowsize',COMP.window_size)
     cm=UNIT.CreateModel('flask',COMP.window_size)
-    #UNIT=imp.load_source('mymodule','unit/'+mName+'.py');
-    #xs=str(isinstance(UNIT,ModuleType))
-    #print('unit ',xs)
-    #reload('module')
-    #UNIT.model.compile(loss='mean_squared_error', optimizer='adam')
-    #cm=UNIT.model
-    #cm=UNIT.CreateModel('flask')
     COMP.compute(cm)
-    #cm=UNIT.model
     
-  #  munit.compute('ABC')
     return 'OK '
 
 
@@ -123,12 +111,19 @@ def start_module():
     if not COMP.hasdata:
         return 'ERROR the model has no data',500
     global UNIT
-    UNIT=imp.load_source('mymodule','unit/module.py');
+    COMP.clear
+    with open('unit/modelconv1.txt', 'r') as myfile:
+        m=myfile.read()
+    print(m)
+    UNIT.CreateModel=compile_unit(m)
+    UNIT.was=True
+   
+    #UNIT=imp.load_source('mymodule','unit/modelconv1.py');
     xs=str(isinstance(UNIT,ModuleType))
     print(xs)
+    print('windowsize',COMP.window_size)
     COMP.compute(UNIT.CreateModel('flask',COMP.window_size))
     
-  #  munit.compute('ABC')
     return 'OK '
 
 @app.route('/check', methods=['GET'])

@@ -1,0 +1,24 @@
+from keras.models import Sequential
+from keras.layers import Dense,Activation,Dropout
+from keras.layers import LSTM
+from keras.layers import Embedding
+from keras.layers import Conv1D, GlobalAveragePooling1D, MaxPooling1D
+
+
+
+def CreateModel(o,s,w):
+    window_size=10
+    print('createmodel',s,'   ',w)
+    Yclasses=w
+    look_width=48
+    look_height=32
+    model = Sequential()
+    model.add(Conv1D(64, 3, activation='relu', input_shape=(look_width,look_height)))
+    model.add(Conv1D(64, 3, activation='relu'))
+    model.add(MaxPooling1D(3))
+    model.add(Conv1D(128, 3, activation='relu'))
+    model.add(Conv1D(128, 3, activation='relu'))
+    model.add(GlobalAveragePooling1D())
+    model.add(Dropout(0.5))
+    model.add(Dense(Yclasses, activation='softmax'))
+    return model
