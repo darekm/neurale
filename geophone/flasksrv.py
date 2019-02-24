@@ -100,6 +100,7 @@ def put_module():
     return 'OK '
 
 
+
 @app.route('/start', methods=['GET'])
 def start_module():
     m=request.args.get('dataset')
@@ -128,14 +129,21 @@ def start_module():
 
 @app.route('/check', methods=['GET'])
 def checkmodel():
-    m=request.args.get('data')
-    if m:
-        print('data '+m)
+    m2=request.data
+    m=m2.decode("utf-8")
+
+    #m=request.args.get('data')
+    #//    if m:
+    #    print('data '+m)
     global COMP
  
-    if not COMP.hasdata:
-        return 'ERROR the model has no data',500
-    x= COMP.check(m)
+    #   if not COMP.hasdata:
+    #        return 'ERROR the model has no data',500
+    try:
+        x= COMP.check(m)
+    except Exception as ex:
+        print(ex)
+        return 'ERROR no data',500
     return 'OK  &'+"value= {}".format(x)
  
 

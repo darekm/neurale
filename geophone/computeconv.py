@@ -46,18 +46,28 @@ class Computer():
         score = _model.evaluate(self.testX,self.testYO, verbose=1) 
         #print('loss:', score[0])
         self.mmodel=_model
+        mx1=self.testX[0:1,:]
+        print('mx1',mx1.shape)
+        mp1=self.mmodel.predict(mx1)
+        print(mp1)
         #trainPredict = self.mmodel.predict(self.trainX)
+
         
     def check(self,_data):
-        if not self.mmodel:
-            return "model not initialized"
         mdf=numpy.fromstring(_data, sep=',')
-        mx1=mdf.reshape(1,48,-1)
-
-        mp1=model.predict(mx1)
+        mx3=mdf.reshape(1,-1)
+        mx2=self.scaler.transform(mx3)
+        mx1=mx2.reshape(1,48,-1)
+        print('MM',mx1.shape)
+        
+        if not self.mmodel:
+            raise Exception( "model not initialized")
+        
+        mp1=self.mmodel.predict(mx1)
         print('predict',mp1)
         tmp1=numpy.argmax(mp1,1)
         print('return:',tmp1)
+        print('inverse:',self.le.inverse_transform(tmp1))
         return tmp1
 
         
@@ -108,10 +118,10 @@ class Computer():
         self.window_size=7
         
         
-        le = preprocessing.LabelEncoder()
+        self.le = preprocessing.LabelEncoder()
         YN=utils.column_or_1d(Ydataset, warn=True)
-        YO=le.fit_transform(YN)
-        self.Yclasses=len(le.classes_)
+        YO=self.le.fit_transform(YN)
+        self.Yclasses=len(self.le.classes_)
         self.window_size=self.Yclasses
         self.trainY = YO[0:train_size]
         self.testY=YO[train_size:len(YO)]
