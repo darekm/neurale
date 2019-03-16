@@ -140,10 +140,10 @@ def checkmodel():
     #   if not COMP.hasdata:
     #        return 'ERROR the model has no data',500
     try:
-        x= COMP.check(m)
+        x= COMP.predict (m)
     except Exception as ex:
         print(ex)
-        return 'ERROR no data',500
+        return 'ERROR '+str(ex),500
     return 'OK  &'+"value= {}".format(x)
  
 

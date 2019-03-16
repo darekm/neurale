@@ -53,7 +53,7 @@ class Computer():
         #trainPredict = self.mmodel.predict(self.trainX)
 
         
-    def check(self,_data):
+    def predict(self,_data):
         mdf=numpy.fromstring(_data, sep=',')
         mx3=mdf.reshape(1,-1)
         mx2=self.scaler.transform(mx3)
@@ -67,8 +67,9 @@ class Computer():
         print('predict',mp1)
         tmp1=numpy.argmax(mp1,1)
         print('return:',tmp1)
-        print('inverse:',self.le.inverse_transform(tmp1))
-        return tmp1
+        tmp2=self.le.inverse_transform(tmp1)
+        print('inverse:',tmp2,"   ",tmp2[0])
+        return tmp2[0]
 
         
     def run(self):
