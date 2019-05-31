@@ -1,6 +1,16 @@
 import numpy as np
 
 
+def load_ypred():
+    import pandas
+    import math
+ 
+    MM=pandas.read_csv("ypred.csv")
+    print('MM',MM.shape)
+    x=MM.iloc[:]
+    print("YPRED:",x.shape)
+    return x
+     
 def load_mnist():
     # the data, shuffled and split between train and test sets
     from keras.datasets import mnist
@@ -13,6 +23,21 @@ def load_mnist():
     print('MNIST:', x.shape)
     return x, y
 
+def load_mrec():
+    import pandas
+    import math
+    from sklearn.preprocessing import MinMaxScaler
+
+    MM=pandas.read_csv("data/mrec20190528fftimg.csv")
+    print('MM',MM.shape)
+    Mdataset=MM.iloc[1:,2:258] 
+    Y=MM.iloc[1:,0:2]
+    # normalize the dataset
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    dataset = scaler.fit_transform(Mdataset)
+    x = dataset.reshape(-1, 16, 16, 1).astype('float32')
+    print('MREC:', x.shape)
+    return x, Y
 
 def load_usps(data_path='./data/usps'):
     import os
@@ -28,6 +53,7 @@ def load_usps(data_path='./data/usps'):
     data = data[1:-1]
     data = [list(map(float, line.split())) for line in data]
     data = np.array(data)
+    
     data_train, labels_train = data[:, 1:], data[:, 0]
 
     with open(data_path + '/usps_test.jf') as f:
