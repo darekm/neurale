@@ -32,10 +32,11 @@ def load_mrec():
     print('MM',MM.shape)
     Mdataset=MM.iloc[1:,2:258] 
     Y=MM.iloc[1:,0:2]
+    M2=np.log(Mdataset)
     # normalize the dataset
     scaler = MinMaxScaler(feature_range=(0, 1))
-    dataset = scaler.fit_transform(Mdataset)
-    x = dataset.reshape(-1, 16, 16, 1).astype('float32')
+    dataset = scaler.fit_transform(M2)
+    x = dataset.reshape(-1, 8, 32, 1).astype('float32')
     print('MREC:', x.shape)
     return x, Y
 
