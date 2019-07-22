@@ -13,7 +13,7 @@ def load_ypred():
      
 def load_mnist():
     # the data, shuffled and split between train and test sets
-    from keras.datasets import mnist
+    from tensorflow.keras.datasets import mnist
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
     x = np.concatenate((x_train, x_test))
