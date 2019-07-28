@@ -28,8 +28,8 @@ def load_mrec():
     import math
     from sklearn.preprocessing import MinMaxScaler
 
-    MM=pandas.read_csv("data/mrec20190528fftimg.csv")
-    print('MM',MM.shape)
+    MM=pandas.read_csv("data/mrec20190723fftimg.csv")
+    print('MM',MM.shape) 
     Mdataset=MM.iloc[1:,2:258] 
     Y=MM.iloc[1:,0:2]
     M2=np.log(Mdataset)
